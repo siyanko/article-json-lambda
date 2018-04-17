@@ -15,20 +15,15 @@ object Main {
     }
 
     val jsonConverter = new JsonConverter {
-      override def toJson[T](data: T): Json = ???
+      override def toJson(data: String): Either[String, Json] = ???
     }
 
     val articleValidator = new ArticleValidator {
       override def validate[T](data: T): Either[String, T] = ???
     }
 
-    val program: Article => Either[String, String] = article => for {
-      a <- articleValidator.validate(article)
-      aJson <- jsonConverter.toJson(a)
-      saved <- s3.save(aJson)
-    } yield saved
-
-    val result = program("my small article")
+    import Lambda._
+    val result = stringArticleLambda.run(articleValidator, jsonConverter, s3)("my small article")
 
     println(result)
   }
