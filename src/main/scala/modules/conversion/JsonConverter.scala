@@ -1,7 +1,7 @@
 package modules.conversion
-
+import model._
 import io.circe.Json
 
 trait JsonConverter {
-  def toJson(data: String): Either[String, Json]
+  def toJson(data: Article): Either[String, Json]
 }
