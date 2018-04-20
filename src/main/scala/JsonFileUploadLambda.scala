@@ -41,8 +41,7 @@ class JsonFileUploadLambda {
   val jc: JsonConverter = new JsonConverter {
     override def toJson(data: Article) = Try(data.asJson) match {
       case Success(json) => Right(json)
-      case Failure(err: Throwable) => Left(err.getMessage)
-      case Failure(_) => Left("Could not make json out of " + data)
+      case Failure(err) => Left(err.getMessage)
     }
   }
 
@@ -57,19 +56,16 @@ class JsonFileUploadLambda {
         s3Client.putObject("test-articles", "test-file.json", data.noSpaces)
       } match {
         case Success(_) => Right("OK")
-        case Failure(err: Throwable) => Left(err.getMessage)
-        case Failure(_) => Left("Something went wrong during saving to s3")
+        case Failure(err) => Left(err.getMessage)
       }
     }
   }
 
   val lambda: (String) => Either[String, String] = Lambda.stringArticleLambda.run(av, ap, jc, s3)
 
-  def handle(context: Context): Unit = {
-    lambda("#Article \n This is my small article") match {
+  def handle(input: String, context: Context): Unit =
+    lambda(input) match {
       case Right(_) => println("File saved successfully")
       case Left(err) => println(s"ERROR: $err")
     }
-  }
-
 }
