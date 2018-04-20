@@ -14,7 +14,7 @@ class StringArticleLambdaSpec extends WordSpec with Matchers {
   }
 
   val ap = new ArticleParser {
-    override def parse[A](data: A) = Right(Article(Title("some-title", 1), Nil))
+    override def parse(data: String) = Right(Article(Title("some-title", 1), Nil))
   }
 
   val jc = new JsonConverter {
@@ -56,7 +56,7 @@ class StringArticleLambdaSpec extends WordSpec with Matchers {
 
     "give an error if cannot parse the article string" in {
       val localAp = new ArticleParser {
-        override def parse[A](data: A) = Left("Cannot parse the article string")
+        override def parse(data: String) = Left("Cannot parse the article string")
       }
 
       Lambda.stringArticleLambda.run(av, localAp, jc, s3)("some invalid article") shouldBe Left("Cannot parse the article string")

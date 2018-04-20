@@ -7,8 +7,9 @@ trait Lambda {
   def run(av: ArticleValidator, ap: ArticleParser, jc: JsonConverter, s3: S3): String => Either[String, String] =
     articleString => for {
       as <- av.validate(articleString)
-      article <- ap.parse[String](as)
+      article <- ap.parse(as)
       aJson <- jc.toJson(article)
+      _ = println(aJson)
       saved <- s3.save(aJson)
     } yield saved
 
