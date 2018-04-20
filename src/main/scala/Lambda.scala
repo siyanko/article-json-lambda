@@ -9,7 +9,6 @@ trait Lambda {
       as <- av.validate(articleString)
       article <- ap.parse(as)
       aJson <- jc.toJson(article)
-      _ = println(aJson)
       saved <- s3.save(aJson)
     } yield saved
 

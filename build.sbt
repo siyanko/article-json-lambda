@@ -15,8 +15,9 @@ libraryDependencies ++= Seq(
 
   //aws
   "com.amazonaws" % "aws-java-sdk-s3" % "1.11.313",
+  "com.amazonaws" % "aws-lambda-java-core" % "1.2.0",
 
-  "org.scalatest" %% "scalatest" % "3.0.5" % Test
+"org.scalatest" %% "scalatest" % "3.0.5" % Test
 )
 
 scalacOptions += "-Ypartial-unification"
