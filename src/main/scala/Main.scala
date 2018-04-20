@@ -1,3 +1,5 @@
+import com.amazonaws.services.s3.{AmazonS3, AmazonS3Client, AmazonS3ClientBuilder}
+import io.circe.Json
 import io.circe.generic.auto._
 import io.circe.syntax._
 import model.{Article, Paragraph, Title}
@@ -12,9 +14,10 @@ object Main {
 
   def main(args: Array[String]): Unit = {
 
-    //TODO: implement article validation
     val av: ArticleValidator = new ArticleValidator {
-      override def validate[T](data: T) = Right(data)
+      override def validate(data: String) =
+        if (data.isEmpty) Left("Article is empty")
+        else Right(data)
     }
 
     val ap: ArticleParser = new ArticleParser {
@@ -43,9 +46,17 @@ object Main {
       }
     }
 
-    //TODO: implement saving files to s3
     val s3: S3 = new S3 {
-      override def save[T](data: T) = Right("OK")
+      val s3Client: AmazonS3 = AmazonS3ClientBuilder.defaultClient()
+      override def save(data: Json) = {
+        Try {
+          s3Client.putObject("test-bucket", "test-file.json", data.noSpaces)
+        } match {
+          case Success(_) => Right("OK")
+          case Failure(err: Throwable) => Left(err.getMessage)
+          case Failure(_) => Left("Something went wrong during saving to s3")
+        }
+      }
     }
 
     val lambda: (String) => Either[String, String] = Lambda.stringArticleLambda.run(av, ap, jc, s3)

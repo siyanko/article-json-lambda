@@ -11,7 +11,10 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-parser" % "0.9.3",
 
   //cats
-  "org.typelevel" %% "cats-core" % "1.1.0",
+  "org.typelevel" %% "cats-core" % "1.0.1",
+
+  //aws
+  "com.amazonaws" % "aws-java-sdk-s3" % "1.11.313",
 
   "org.scalatest" %% "scalatest" % "3.0.5" % Test
 )

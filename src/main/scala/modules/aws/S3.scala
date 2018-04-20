@@ -1,8 +1,10 @@
 package modules.aws
 
+import io.circe.Json
+
 /**
   * Models interaction with AWS S3
   */
 trait S3 {
-  def save[T](data: T): Either[String, String]
+  def save(data: Json): Either[String, String]
 }
